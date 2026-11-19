@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="Npgsql.OpenTelemetry" />
+    <PackageReference Include="EFCore.NamingConventions" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
+    <PackageReference Include="Pgvector.EntityFrameworkCore" />
+    <PackageReference Include="Isopoh.Cryptography.Argon2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Assistant.Core\Assistant.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- D1: las entidades son internas y sólo su proyecto de tests las ve. -->
+    <InternalsVisibleTo Include="Assistant.Persistence.Tests" />
+  </ItemGroup>
+
+</Project>

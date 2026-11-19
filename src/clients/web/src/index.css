@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --ink: #1a2332;
+  --muted: #5c6b7a;
+  --surface: #f3f6f4;
+  --panel: #ffffff;
+  --line: #d5dde4;
+  --accent: #0f6e56;
+  --accent-soft: #d8efe6;
+  --danger: #a33b2b;
+  --warn: #9a6b12;
+  --user-bubble: #0f6e56;
+  --assistant-bubble: #e8eef3;
+  font-family: "Segoe UI", "IBM Plex Sans", "Helvetica Neue", sans-serif;
+  line-height: 1.45;
+  color: var(--ink);
+  background: var(--surface);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background:
+    radial-gradient(1200px 500px at 10% -10%, #dceee6 0%, transparent 55%),
+    radial-gradient(900px 400px at 100% 0%, #d9e4f0 0%, transparent 50%),
+    var(--surface);
+}
+
+button,
+textarea,
+input {
+  font: inherit;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

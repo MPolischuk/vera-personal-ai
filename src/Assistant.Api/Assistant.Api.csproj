@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Assistant.Core\Assistant.Core.csproj" />
+    <ProjectReference Include="..\Assistant.Extensions.Memory\Assistant.Extensions.Memory.csproj" />
+    <ProjectReference Include="..\Assistant.Extensions.Notes\Assistant.Extensions.Notes.csproj" />
+    <ProjectReference Include="..\Assistant.Extensions.Reminders\Assistant.Extensions.Reminders.csproj" />
+    <ProjectReference Include="..\Assistant.Extensions.Delegation\Assistant.Extensions.Delegation.csproj" />
+    <ProjectReference Include="..\Assistant.Extensions.Research\Assistant.Extensions.Research.csproj" />
+    <ProjectReference Include="..\Assistant.Extensions.Mcp\Assistant.Extensions.Mcp.csproj" />
+    <ProjectReference Include="..\Assistant.Extensions.Skills\Assistant.Extensions.Skills.csproj" />
+    <ProjectReference Include="..\Assistant.Extensions.Proactive\Assistant.Extensions.Proactive.csproj" />
+    <ProjectReference Include="..\Assistant.Providers.Llm\Assistant.Providers.Llm.csproj" />
+    <ProjectReference Include="..\Assistant.Providers.Speech\Assistant.Providers.Speech.csproj" />
+    <ProjectReference Include="..\Assistant.Channels\Assistant.Channels.csproj" />
+    <ProjectReference Include="..\Assistant.Channels.Telegram\Assistant.Channels.Telegram.csproj" />
+    <ProjectReference Include="..\Assistant.Channels.WebPush\Assistant.Channels.WebPush.csproj" />
+    <ProjectReference Include="..\Assistant.Persistence\Assistant.Persistence.csproj" />
+    <ProjectReference Include="..\Assistant.Scheduling\Assistant.Scheduling.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.OpenTelemetry" />
+    <PackageReference Include="YamlDotNet" />
+    <PackageReference Include="Concentus" />
+    <PackageReference Include="Concentus.OggFile" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- El archivo vive en la raíz porque es dato del usuario, no código. Se copia a la
+         salida para que la ruta relativa funcione igual desde el IDE y desde el publicado;
+         en el contenedor, el volumen montado sobre /app/config lo tapa. -->
+    <Content Include="..\..\compose.yaml" Link="compose.yaml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\compose.production.yaml" Link="compose.production.yaml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\config\*.yaml" Exclude="..\..\config\personality.local.yaml"
+             Link="config\%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\config\personality.local.yaml" Link="config\personality.local.yaml"
+             CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Never"
+             Condition="Exists('..\..\config\personality.local.yaml')" />
+    <Content Include="..\..\config\skills\**\*" Exclude="..\..\config\skills\**\SKILL.demo.md"
+             Link="config\skills\%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest"
+             Condition="Exists('..\..\config\skills')" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Assistant.Api.Tests" />
+    <InternalsVisibleTo Include="Assistant.Evaluation.Tests" />
+  </ItemGroup>
+
+</Project>

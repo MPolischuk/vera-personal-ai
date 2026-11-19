@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>SttBakeoff</RootNamespace>
+    <AssemblyName>stt-bakeoff</AssemblyName>
+    <Description>Offline Rioplatense STT bake-off. Not referenced by Assistant.Api.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NAudio" />
+  </ItemGroup>
+
+</Project>

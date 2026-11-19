@@ -1,0 +1,39 @@
+# Excludes build output, dependencies, and local secrets from the agent index.
+# specs/ and src/ stay searchable. Patterns follow .gitignore.
+
+# .NET
+bin/
+obj/
+artifacts/
+TestResults/
+
+# IDEs
+.vs/
+.idea/
+*.sln.docstates
+
+# Node
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# Local config and secrets
+.env
+.env*.local
+appsettings.Development.json
+appsettings.Local.json
+*.pfx
+*.p12
+
+# Dev certificates
+certs/
+
+# Coverage and diagnostics
+coverage/
+diagnostics/
+*.coverage
+*.cobertura.xml
+
+# Local Postgres dumps
+backups/

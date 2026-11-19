@@ -1,0 +1,184 @@
+name: personal-ai-assistant
+
+services:
+  db:
+    image: pgvector/pgvector:0.8.7-pg17@sha256:ac08538c6f8b9904c33c8224c5e5706dbe760aca29db1d096972b4052c22a75d
+    container_name: assistant-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-assistant}
+      POSTGRES_USER: ${POSTGRES_USER:-assistant}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?missing POSTGRES_PASSWORD; copy .env.example to .env}
+      POSTGRES_APP_USER: ${POSTGRES_APP_USER:-assistant_app}
+      POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:?missing POSTGRES_APP_PASSWORD; copy .env.example to .env}
+      TZ: UTC
+      PGTZ: UTC
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./docker/db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-assistant} -d ${POSTGRES_DB:-assistant}"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: src/Assistant.Api/Dockerfile
+      args:
+        # The production overlay resets args. The PC still passes the token from .env.
+        VITE_BEARER_TOKEN: ${AUTH_BEARER_TOKEN:-}
+    container_name: assistant-api
+    depends_on:
+      db:
+        condition: service_healthy
+      docling-serve:
+        condition: service_started
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Assistant: Host=db;Port=5432;Database=${POSTGRES_DB:-assistant};Username=${POSTGRES_APP_USER:-assistant_app};Password=${POSTGRES_APP_PASSWORD}
+      Auth__BearerToken: ${AUTH_BEARER_TOKEN:-}
+      Assistant__Models__Conversation__ApiKey: ${LLM_API_KEY:-}
+      Assistant__Models__Conversation__Model: ${LLM_CONVERSATION_MODEL:-meta-llama/llama-3.1-8b-instruct}
+      Assistant__Models__Utility__ApiKey: ${LLM_API_KEY:-}
+      Assistant__Models__Utility__Model: ${LLM_UTILITY_MODEL:-openai/gpt-4o-mini}
+      Assistant__Models__Embedding__ApiKey: ${LLM_API_KEY:-}
+      Assistant__Models__Embedding__Model: ${LLM_EMBEDDING_MODEL:-openai/text-embedding-3-small}
+      Assistant__Speech__Stt__ApiKey: ${STT_API_KEY:?missing STT_API_KEY; add your Deepgram key to .env}
+      # Scribe v2 won the V2-04.1 WER table. Leave these at the Deepgram defaults:
+      # the transcript arrived in about 1.5 s, so first audio cannot be under 1 s.
+      # To try it: STT_PROVIDER=openrouter, STT_MODEL=elevenlabs/scribe-v2,
+      # STT_ENDPOINT=https://openrouter.ai/api/v1, STT_PRICE_PER_MINUTE_USD=0.00366,
+      # and set STT_API_KEY to the OpenRouter key.
+      Assistant__Speech__Stt__Provider: ${STT_PROVIDER:-deepgram}
+      Assistant__Speech__Stt__Model: ${STT_MODEL:-nova-3}
+      Assistant__Speech__Stt__Endpoint: ${STT_ENDPOINT:-https://api.deepgram.com}
+      Assistant__Speech__Stt__PricePerMinuteUsd: ${STT_PRICE_PER_MINUTE_USD:-0}
+      Assistant__Speech__Tts__ApiKey: ${TTS_API_KEY:?missing TTS_API_KEY; add your ElevenLabs key to .env}
+      Assistant__Speech__Tts__VoiceId: ${TTS_VOICE_ID:?missing TTS_VOICE_ID; add an ElevenLabs voice id to .env}
+      Assistant__Speech__Tts__Model: ${TTS_MODEL:-eleven_flash_v2_5}
+      Assistant__Personality__ProfilePath: config/personality.yaml
+      Assistant__Api__VerifySchemaOnStart: "true"
+      Diagnostics__EnableTestEndpoints: ${DIAGNOSTICS_ENABLE_TEST_ENDPOINTS:-false}
+      Telegram__Enabled: ${TELEGRAM_ENABLED:-false}
+      Telegram__Mode: ${TELEGRAM_MODE:-Polling}
+      Telegram__BotToken: ${TELEGRAM_BOT_TOKEN:-}
+      Telegram__BotUsername: ${TELEGRAM_BOT_USERNAME:-}
+      Telegram__WebhookSecret: ${TELEGRAM_WEBHOOK_SECRET:-}
+      Channels__PublicBaseUrl: ${ASSISTANT_PUBLIC_BASE_URL:-}
+      WebPush__Enabled: ${WEBPUSH_ENABLED:-false}
+      WebPush__VapidSubject: ${WEBPUSH_VAPID_SUBJECT:-}
+      WebPush__VapidPublicKey: ${WEBPUSH_VAPID_PUBLIC_KEY:-}
+      WebPush__VapidPrivateKey: ${WEBPUSH_VAPID_PRIVATE_KEY:-}
+      OpenTelemetry__OtlpEndpoint: http://dashboard:18889
+      # PT-33 diagnostic: dump the PCM handed to STT as WAV. Empty = off.
+      ASSISTANT_STT_DUMP_DIR: ${STT_DUMP_DIR:-}
+      Research__DoclingBaseUrl: http://docling-serve:5001
+      Research__DoclingApiKey: ${DOCLING_SERVE_API_KEY:?missing DOCLING_SERVE_API_KEY; add it to .env}
+      Research__DocumentRoot: /var/lib/assistant/documents
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config:/app/config:ro
+      - ./config/skills:/app/config/skills
+      - ./diagnostics:/app/diagnostics
+      - ./models/harrier-oss-v1-270m:/app/models/harrier-oss-v1-270m:ro
+      - document-data:/var/lib/assistant/documents
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+    restart: unless-stopped
+
+  dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:13.4.2
+    container_name: assistant-dashboard
+    environment:
+      DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: "true"
+    ports:
+      - "18888:18888"   # web UI
+      - "18889:18889"   # OTLP ingest
+    restart: unless-stopped
+
+  coolify-mcp:
+    build:
+      context: .
+      dockerfile: src/Assistant.Mcp.Coolify/Dockerfile
+    container_name: assistant-coolify-mcp
+    environment:
+      COOLIFY_API_URL: ${COOLIFY_API_URL:-}
+      COOLIFY_API_TOKEN: ${COOLIFY_API_TOKEN:-}
+      COOLIFY_ALLOWLIST: ${COOLIFY_ALLOWLIST:-}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+
+  searxng:
+    build:
+      context: .
+      dockerfile: docker/searxng/Dockerfile
+    container_name: assistant-searxng
+    environment:
+      SEARXNG_SECRET: ${SEARXNG_SECRET:-}
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+
+  search-mcp:
+    build:
+      context: .
+      dockerfile: src/Assistant.Mcp.Search/Dockerfile
+    container_name: assistant-search-mcp
+    environment:
+      SEARXNG_URL: http://searxng:8080/
+    depends_on:
+      searxng:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+
+  weather-mcp:
+    image: ghcr.io/cyanheads/open-meteo-mcp-server:0.4.1
+    container_name: assistant-weather-mcp
+    environment:
+      MCP_TRANSPORT_TYPE: http
+      MCP_HTTP_PORT: "3010"
+      MCP_HTTP_HOST: 0.0.0.0
+      MCP_HTTP_ENDPOINT_PATH: /mcp
+      MCP_AUTH_MODE: none
+      MCP_SESSION_MODE: stateless
+    restart: unless-stopped
+
+  docling-serve:
+    image: quay.io/docling-project/docling-serve-cpu:latest
+    container_name: assistant-docling
+    environment:
+      DOCLING_SERVE_ENABLE_UI: "false"
+      DOCLING_SERVE_MAX_SYNC_WAIT: "70"
+      DOCLING_SERVE_API_KEY: ${DOCLING_SERVE_API_KEY:?missing DOCLING_SERVE_API_KEY; add it to .env}
+      DOCLING_SERVE_MAX_NUM_PAGES: "60"
+      DOCLING_SERVE_MAX_FILE_SIZE: "15728640"
+    shm_size: "1gb"
+    restart: unless-stopped
+
+volumes:
+  db-data:
+  document-data:

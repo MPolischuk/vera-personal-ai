@@ -1,0 +1,19 @@
+<!doctype html>
+<html><head><meta charset="UTF-8"><title>Banco dev</title></head>
+<body style="margin:0;background:#ddd"><div id="root" style="width:100vw;height:100vh"></div>
+<script>
+// DEV-ONLY frozen clock (?frozen=1): virtual performance.now/Date.now + manual rAF.
+// window.renderAt(tMs) advances in 1/60 s steps up to tMs (absolute virtual ms) and flushes rAF each step.
+if (new URLSearchParams(location.search).has("frozen")) {
+  let vt = 0; const base = Date.now(); let q = [];
+  performance.now = () => vt; Date.now = () => base + vt;
+  window.requestAnimationFrame = (cb) => { q.push(cb); return q.length; };
+  window.cancelAnimationFrame = () => {};
+  window.virtualNow = () => vt;
+  window.renderAt = async (t) => {
+    while (vt < t) { vt = Math.min(t, vt + 1000 / 60); const run = q; q = []; for (const cb of run) cb(vt); }
+    await new Promise((r) => setTimeout(r, 0));
+  };
+}
+</script>
+<script type="module" src="/src/dev/bench.tsx"></script></body></html>

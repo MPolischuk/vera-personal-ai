@@ -1,0 +1,36 @@
+# Production overlay. The PC keeps using compose.yaml alone.
+# docker compose -f compose.yaml -f compose.production.yaml
+
+services:
+  db:
+    ports: !reset []
+
+  api:
+    ports: !reset []
+    build:
+      args: !reset {}
+    environment:
+      Auth__Mode: Password
+      Auth__BearerToken: ""
+      Auth__JwtSigningKey: ${AUTH_JWT_SIGNING_KEY:?missing AUTH_JWT_SIGNING_KEY}
+      Auth__InitialPassword: ${AUTH_INITIAL_PASSWORD:?missing AUTH_INITIAL_PASSWORD}
+      OpenTelemetry__OtlpEndpoint: ""
+      # Optional channels. Coolify supplies the values; an empty value keeps the channel off.
+      Telegram__Enabled: ${TELEGRAM_ENABLED:-false}
+      Telegram__Mode: ${TELEGRAM_MODE:-Webhook}
+      Telegram__BotToken: ${TELEGRAM_BOT_TOKEN:-}
+      Telegram__BotUsername: ${TELEGRAM_BOT_USERNAME:-}
+      Telegram__WebhookSecret: ${TELEGRAM_WEBHOOK_SECRET:-}
+      Telegram__ManageWebhook: ${TELEGRAM_MANAGE_WEBHOOK:-true}
+      Channels__PublicBaseUrl: ${ASSISTANT_PUBLIC_BASE_URL:-}
+      WebPush__Enabled: ${WEBPUSH_ENABLED:-false}
+      WebPush__VapidSubject: ${WEBPUSH_VAPID_SUBJECT:-}
+      WebPush__VapidPublicKey: ${WEBPUSH_VAPID_PUBLIC_KEY:-}
+      WebPush__VapidPrivateKey: ${WEBPUSH_VAPID_PRIVATE_KEY:-}
+      Delivery__QuietHours__Start: "${DELIVERY_QUIET_HOURS_START:-23:30}"
+      Delivery__QuietHours__End: "${DELIVERY_QUIET_HOURS_END:-08:00}"
+      Scheduler__Enabled: ${SCHEDULER_ENABLED:-true}
+      Reminders__Enabled: ${REMINDERS_ENABLED:-true}
+
+  dashboard:
+    profiles: ["disabled"]

@@ -1,0 +1,12 @@
+use_default_settings: true
+
+search:
+  formats:
+    - html
+    - json
+
+server:
+  # SEARXNG_SECRET overrides this at runtime. The placeholder is not a credential.
+  secret_key: "ultrasecretkey"
+  limiter: false
+  image_proxy: false

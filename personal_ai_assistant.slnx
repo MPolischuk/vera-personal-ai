@@ -1,0 +1,51 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Assistant.Abstractions/Assistant.Abstractions.csproj" />
+    <Project Path="src/Assistant.Api/Assistant.Api.csproj" />
+    <Project Path="src/Assistant.Channels/Assistant.Channels.csproj" />
+    <Project Path="src/Assistant.Channels.Telegram/Assistant.Channels.Telegram.csproj" />
+    <Project Path="src/Assistant.Channels.WebPush/Assistant.Channels.WebPush.csproj" />
+    <Project Path="src/Assistant.Core/Assistant.Core.csproj" />
+    <Project Path="src/Assistant.Extensions.Mcp/Assistant.Extensions.Mcp.csproj" />
+    <Project Path="src/Assistant.Mcp.Coolify/Assistant.Mcp.Coolify.csproj" />
+    <Project Path="src/Assistant.Mcp.Search/Assistant.Mcp.Search.csproj" />
+    <Project Path="src/Assistant.Extensions.Memory/Assistant.Extensions.Memory.csproj" />
+    <Project Path="src/Assistant.Extensions.Notes/Assistant.Extensions.Notes.csproj" />
+    <Project Path="src/Assistant.Extensions.Reminders/Assistant.Extensions.Reminders.csproj" />
+    <Project Path="src/Assistant.Extensions.Delegation/Assistant.Extensions.Delegation.csproj" />
+    <Project Path="src/Assistant.Extensions.Proactive/Assistant.Extensions.Proactive.csproj" />
+    <Project Path="src/Assistant.Extensions.Research/Assistant.Extensions.Research.csproj" />
+    <Project Path="src/Assistant.Extensions.Skills/Assistant.Extensions.Skills.csproj" />
+    <Project Path="src/Assistant.Persistence/Assistant.Persistence.csproj" />
+    <Project Path="src/Assistant.Providers.Llm/Assistant.Providers.Llm.csproj" />
+    <Project Path="src/Assistant.Providers.Speech/Assistant.Providers.Speech.csproj" />
+    <Project Path="src/Assistant.Scheduling/Assistant.Scheduling.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/VpsOperator.Mcp/VpsOperator.Mcp.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Assistant.Architecture.Tests/Assistant.Architecture.Tests.csproj" />
+    <Project Path="tests/Assistant.Channels.Conformance/Assistant.Channels.Conformance.csproj" />
+    <Project Path="tests/Assistant.Channels.Tests/Assistant.Channels.Tests.csproj" />
+    <Project Path="tests/Assistant.Channels.Telegram.Tests/Assistant.Channels.Telegram.Tests.csproj" />
+    <Project Path="tests/Assistant.Channels.WebPush.Tests/Assistant.Channels.WebPush.Tests.csproj" />
+    <Project Path="tests/Assistant.Evaluation.Tests/Assistant.Evaluation.Tests.csproj" />
+    <Project Path="tests/Assistant.Extensions.Mcp.FixtureServer/Assistant.Extensions.Mcp.FixtureServer.csproj" />
+    <Project Path="tests/Assistant.Mcp.Coolify.Tests/Assistant.Mcp.Coolify.Tests.csproj" />
+    <Project Path="tests/Assistant.Mcp.Search.Tests/Assistant.Mcp.Search.Tests.csproj" />
+    <Project Path="tests/Assistant.Extensions.Mcp.Tests/Assistant.Extensions.Mcp.Tests.csproj" />
+    <Project Path="tests/Assistant.Extensions.Memory.Tests/Assistant.Extensions.Memory.Tests.csproj" />
+    <Project Path="tests/Assistant.Extensions.Notes.Tests/Assistant.Extensions.Notes.Tests.csproj" />
+    <Project Path="tests/Assistant.Extensions.Reminders.Tests/Assistant.Extensions.Reminders.Tests.csproj" />
+    <Project Path="tests/Assistant.Extensions.Delegation.Tests/Assistant.Extensions.Delegation.Tests.csproj" />
+    <Project Path="tests/Assistant.Extensions.Proactive.Tests/Assistant.Extensions.Proactive.Tests.csproj" />
+    <Project Path="tests/Assistant.Extensions.Research.Tests/Assistant.Extensions.Research.Tests.csproj" />
+    <Project Path="tests/Assistant.Extensions.Skills.Tests/Assistant.Extensions.Skills.Tests.csproj" />
+    <Project Path="tests/Assistant.Core.Tests/Assistant.Core.Tests.csproj" />
+    <Project Path="tests/Assistant.Persistence.Tests/Assistant.Persistence.Tests.csproj" />
+    <Project Path="tests/Assistant.Providers.Speech.Tests/Assistant.Providers.Speech.Tests.csproj" />
+    <Project Path="tests/Assistant.Scheduling.Tests/Assistant.Scheduling.Tests.csproj" />
+    <Project Path="tests/VpsOperator.Mcp.Tests/VpsOperator.Mcp.Tests.csproj" />
+  </Folder>
+</Solution>

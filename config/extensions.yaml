@@ -1,0 +1,94 @@
+# Extension manifest. Management writes enabled/tools and applies that server in-process.
+# Editing this file by hand still requires a process restart.
+# Header and environment values are ${ENV_NAME} references, never literal tokens.
+servers:
+  - id: coolify
+    enabled: true
+    version: build
+    transport: StreamableHttp
+    endpoint: http://coolify-mcp:8080/
+    tools:
+      status:
+        permission_level: Read
+        output_trust: Untrusted
+        writes_durable_state: false
+      logs:
+        permission_level: Read
+        output_trust: Untrusted
+        writes_durable_state: false
+      control:
+        permission_level: SensitiveAction
+        output_trust: Untrusted
+        writes_durable_state: false
+  - id: weather
+    enabled: true
+    version: "0.4.1"
+    transport: StreamableHttp
+    endpoint: http://weather-mcp:3010/mcp
+    tools:
+      openmeteo_search_locations:
+        permission_level: Read
+        output_trust: Untrusted
+        writes_durable_state: false
+      openmeteo_get_forecast:
+        permission_level: Read
+        output_trust: Untrusted
+        writes_durable_state: false
+      openmeteo_get_historical:
+        permission_level: Read
+        output_trust: Untrusted
+        writes_durable_state: false
+      openmeteo_get_marine:
+        permission_level: Read
+        output_trust: Untrusted
+        writes_durable_state: false
+      openmeteo_get_air_quality:
+        permission_level: Read
+        output_trust: Untrusted
+        writes_durable_state: false
+      openmeteo_get_elevation:
+        permission_level: Read
+        output_trust: Untrusted
+        writes_durable_state: false
+      openmeteo_get_ensemble:
+        permission_level: Read
+        output_trust: Untrusted
+        writes_durable_state: false
+      openmeteo_get_flood:
+        permission_level: Read
+        output_trust: Untrusted
+        writes_durable_state: false
+      openmeteo_get_climate:
+        permission_level: Read
+        output_trust: Untrusted
+        writes_durable_state: false
+      openmeteo_dataframe_describe:
+        permission_level: Read
+        output_trust: Untrusted
+        writes_durable_state: false
+      openmeteo_dataframe_query:
+        permission_level: Read
+        output_trust: Untrusted
+        writes_durable_state: false
+  - id: search
+    enabled: true
+    version: build
+    transport: StreamableHttp
+    endpoint: http://search-mcp:8080/
+    tools:
+      query:
+        permission_level: Read
+        output_trust: Untrusted
+        writes_durable_state: false
+        metered: true
+  - id: calendar
+    enabled: false
+    version: developer-preview
+    transport: StreamableHttp
+    endpoint: https://calendarmcp.googleapis.com/mcp/v1
+    auth: oauth
+    tools:
+      list_events:
+        permission_level: Read
+        output_trust: Untrusted
+        writes_durable_state: false

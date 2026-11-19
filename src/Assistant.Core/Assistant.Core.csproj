@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.AI.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Assistant.Abstractions\Assistant.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- El catálogo y el despachador son internos (D8); su proyecto de tests los ve. -->
+    <InternalsVisibleTo Include="Assistant.Core.Tests" />
+    <InternalsVisibleTo Include="Assistant.Api.Tests" />
+    <InternalsVisibleTo Include="Assistant.Extensions.Memory" />
+    <InternalsVisibleTo Include="Assistant.Extensions.Skills" />
+  </ItemGroup>
+
+</Project>

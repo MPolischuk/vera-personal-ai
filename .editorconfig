@@ -1,0 +1,45 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{json,jsonc,yaml,yml,ts,tsx,js,jsx,css,md}]
+indent_size = 2
+
+[*.{csproj,props,targets,slnx}]
+indent_size = 2
+
+[*.cs]
+csharp_style_namespace_declarations = file_scoped:error
+csharp_using_directive_placement = outside_namespace:error
+dotnet_sort_system_directives_first = true
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_prefer_braces = true:error
+dotnet_style_require_accessibility_modifiers = always:error
+csharp_style_prefer_primary_constructors = true:suggestion
+
+# Async de punta a punta (convenciones.md)
+dotnet_diagnostic.CS4014.severity = error
+dotnet_diagnostic.CA2007.severity = none
+
+# Nombres
+dotnet_naming_rule.interfaces_empiezan_con_i.severity = error
+dotnet_naming_rule.interfaces_empiezan_con_i.symbols = interfaces
+dotnet_naming_rule.interfaces_empiezan_con_i.style = prefijo_i
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+dotnet_naming_style.prefijo_i.required_prefix = I
+dotnet_naming_style.prefijo_i.capitalization = pascal_case
+
+# EF Core genera namespaces con llaves y literales de matriz; no se editan a mano (PT-02).
+[**/Migrations/*.cs]
+csharp_style_namespace_declarations = block_scoped:none
+dotnet_diagnostic.IDE0161.severity = none
+dotnet_diagnostic.CA1861.severity = none
+
+[*.md]
+trim_trailing_whitespace = false

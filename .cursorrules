@@ -1,0 +1,21 @@
+# Leer `AGENTS.md` para instrucciones completas.
+
+## Quick reference
+
+- Vera: ASP.NET Core .NET 10, React 19, Postgres/pgvector, SignalR.
+- Código nuevo en `src/`. Cliente en `src/clients/web`. Fichas en `docs/caracteristicas`.
+- Identificadores en inglés. Textos de producto en español, de vos.
+
+## Restricciones
+
+- No secretos, direcciones ni nombres de persona en el repo.
+- No editar migraciones a mano ni versionar secretos, direcciones o volcados.
+- No cambiar el contrato de una tool sin actualizar su skill.
+- Una acción sensible de Coolify sigue pidiendo confirmación.
+- Warnings de C# son errores.
+
+## Comandos
+
+- `dotnet build src/Assistant.Api/Assistant.Api.csproj`
+- `npm test --prefix src/clients/web`
+- `docker compose up --build`
